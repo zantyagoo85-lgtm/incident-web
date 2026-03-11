@@ -1,64 +1,188 @@
-# Gestión de Incidentes - Frontend
+# 🌐 Frontend de Gestión de Incidentes
 
-Aplicación web Angular para la gestión de incidentes productivos, parte de una solución completa que incluye backend API e infraestructura Docker.
+Frontend desarrollado con **Angular 21** para la visualización y gestión de incidentes. Enfocado en una arquitectura modular, mantenible y altamente testeable.
 
-## 🚀 Características
+---
 
-- **Listado de incidentes** con filtros avanzados y paginación
-- **Creación de incidentes** con formulario validado
-- **Detalle de incidentes** con timeline completo de eventos
-- **Actualización de estado** en tiempo real
-- **Diseño responsivo** y moderno con Angular Material
-- **Arquitectura limpia** siguiendo principios SOLID
+## 🛠️ Cómo Ejecutar el Proyecto
 
-## 🛠️ Stack Tecnológico
+### Requisitos previos
+- [Node.js](https://nodejs.org/) (versión 18.x o superior)
+- [Angular CLI](https://angular.dev/tools/cli)
 
-- **Frontend**: Angular 21 con TypeScript
-- **UI Framework**: Angular Material
-- **Build Tool**: Angular CLI
-- **Testing**: Jasmine/Karma para unit tests
-- **Container**: Docker con Nginx para producción
-- **HTTP Client**: Angular HttpClient con RxJS
-
-## 📋 Prerrequisitos
-
-- Node.js 18+ 
-- Angular CLI 21+
-- Docker y Docker Compose (para despliegue)
-
-## 🏃‍♂️ Ejecución Local
-
-### 1. Instalar dependencias
+### 1. Instalación de dependencias
 ```bash
 npm install
 ```
 
-### 2. Configurar variables de entorno
-Editar `src/environments/environment.ts` si es necesario:
-```typescript
-export const environment = {
-  production: false,
-  apiBaseUrl: 'http://localhost:5000/api'  // URL del backend API
-};
+### 2. Configuración de Variables de Entorno
+Copia el archivo de ejemplo y ajusta los valores:
+```bash
+cp src/environments/environment.ts.example src/environments/environment.ts
 ```
 
-### 3. Iniciar servidor de desarrollo
+Variables necesarias:
+- `apiBaseUrl`: La dirección de tu API Backend (ej: https://localhost:2021/api).
+- `dockerApiBaseUrl`: URL del API cuando se ejecuta en Docker (ej: http://incident-api:8080/api).
+- `isDocker`: Bandera para indicar si la aplicación se ejecuta en contenedor Docker.
+
+### 3. Ejecución en desarrollo
 ```bash
+npm start
+# o
 ng serve
 ```
+Accede a http://localhost:4200.
 
-La aplicación estará disponible en `http://localhost:4200/`
-
-### 4. Ejecutar tests
+### 4. Construcción para producción
 ```bash
-# Unit tests
-ng test
-
-# E2E tests (si configurados)
-ng e2e
+npm run build:prod
 ```
 
-## � CI/CD Pipeline
+---
+
+## 🏗️ Decisiones de Arquitectura
+
+| Decisión | Justificación | Trade-off |
+|----------|---------------|-----------|
+| **Estructura Feature-First** | Organización por dominios de negocio (Features) para escalar. | Requiere disciplina para mover componentes a shared. |
+| **RxJS + Observables** | Manejo de flujos de datos asíncronos en tiempo real. | Curva de aprendizaje alta para evitar memory leaks. |
+| **Standalone Components** | Menos boilerplate y mejor rendimiento. | Cambio de paradigma respecto a módulos tradicionales. |
+| **Angular Material + CDK** | Componentes UI robustos y accesibles con diseño consistente. | Mayor bundle size inicial. |
+| **Vitest + Playwright** | Testing moderno y rápido con e2e integrado. | Configuración inicial más compleja que Karma. |
+| **ESLint + Prettier** | Código consistente y calidad automatizada. | Configuración de reglas personalizada necesaria. |
+| **Husky + lint-staged** | Pre-commit hooks para mantener calidad de código. | Ligera sobrecarga en cada commit. |
+
+---
+
+## 🧪 Testing
+
+### Pruebas unitarias
+Ejecuta la suite de pruebas unitarias para validar la lógica de los componentes y servicios:
+```bash
+npm run test          # Modo watch
+npm run test:ci       # Para CI/CD (sin watch, Chrome headless)
+```
+
+### Pruebas e2e con Playwright
+```bash
+npm run test:e2e      # Ejecutar pruebas end-to-end
+```
+
+### Validación de código
+```bash
+npm run validate      # Ejecuta lint, format check y type-check
+npm run lint          # Revisión de código
+npm run format        # Formateo automático
+npm run type-check    # Verificación de tipos TypeScript
+```
+
+---
+
+## 🔍 Probar Endpoints desde el Frontend
+
+Para validar la integración sin usar la UI, puedes capturar las peticiones desde la pestaña Network de tu navegador (F12) o utilizar este comando curl para verificar que tu servicio recibe los datos correctamente:
+
+```bash
+curl -X POST https://localhost:2021/api/incidents \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <TU_TOKEN_JWT>" \
+  -d '{
+    "title": "Test desde Front",
+    "description": "Incidente de prueba",
+    "severity": "MEDIUM",
+    "status": "OPEN",
+    "serviceId": "svc-01"
+  }'
+```
+
+### Endpoints principales
+- `GET /api/incidents` - Listar incidentes
+- `POST /api/incidents` - Crear nuevo incidente
+- `GET /api/incidents/:id` - Obtener incidente específico
+- `PUT /api/incidents/:id` - Actualizar incidente
+- `DELETE /api/incidents/:id` - Eliminar incidente
+
+---
+
+## 🚧 Pendientes (Trabajo Futuro)
+
+- **Migración completa a Vitest**: Reemplazar completamente Karma por Vitest para mejorar la velocidad de ejecución de tests.
+- **State Management**: Implementar NgRx o Signal Store si la complejidad del estado de la UI aumenta.
+- **PWA**: Añadir soporte de Service Workers para acceso offline básico.
+- **i18n**: Implementar internacionalización para soporte multi-idioma.
+- **Component Library**: Crear librería de componentes reutilizables para proyectos futuros.
+- **Performance Monitoring**: Integrar herramientas de monitoreo de rendimiento.
+- **Error Boundary**: Implementar manejo global de errores con componentes específicos.
+
+---
+
+## 📝 Changelog
+
+### v1.0.0
+- Setup inicial con arquitectura Feature-First.
+- Configuración de Angular Material para UI consistente.
+- Implementación de módulo de autenticación.
+- Gestión de incidentes CRUD básico.
+
+### v1.1.0
+- Implementación de servicios de consumo API.
+- Unit testing básico con Vitest.
+- Configuración de ESLint y Prettier.
+- Integración con Husky para calidad de código.
+
+### v1.2.0
+- Migración a Angular 21 con standalone components.
+- Configuración de Playwright para testing e2e.
+- Optimización para despliegue en Docker.
+
+---
+
+## 🐳 Soporte Docker
+
+Para ejecutar la aplicación en Docker:
+```bash
+# Construir imagen
+docker build -t incident-web .
+
+# Ejecutar contenedor
+docker run -p 4200:80 incident-web
+```
+
+La configuración de Docker utiliza automáticamente las variables de entorno de `environment.prod.ts`.
+
+---
+
+## 📊 Estructura del Proyecto
+
+```
+src/app/
+├── core/           # Servicios singleton e inyección de dependencias
+├── features/       # Módulos por dominio de negocio
+│   ├── auth/       # Autenticación y autorización
+│   └── incidents/  # Gestión de incidentes
+├── models/         # Interfaces y tipos de datos
+├── shared/         # Componentes y utilidades reutilizables
+├── app.config.ts   # Configuración de la aplicación
+└── app.routes.ts   # Definición de rutas
+```
+
+---
+
+## 🔧 Scripts Disponibles
+
+- `npm start` - Iniciar servidor de desarrollo
+- `npm run build` - Construir para desarrollo
+- `npm run build:prod` - Construir para producción
+- `npm run test` - Ejecutar pruebas unitarias (watch)
+- `npm run test:ci` - Ejecutar pruebas en CI/CD
+- `npm run lint` - Revisión de código
+- `npm run format` - Formatear código
+- `npm run validate` - Validación completa del código
+
+---
+
+## 🔄 Pipeline CI/CD
 
 Este proyecto incluye un pipeline completo de Integración Continua y Despliegue Continuo utilizando GitHub Actions.
 
@@ -113,7 +237,7 @@ npm run build:prod    # Build de producción
 
 📖 **Documentación completa**: [CI-CD.md](./CI-CD.md)
 
-## �🐳 Despliegue con Docker
+## �� Despliegue con Docker
 
 ### Build de imagen
 ```bash
