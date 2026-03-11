@@ -1,0 +1,40 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Build outputs
+dist
+.tmp
+
+# IDE files
+.vscode
+.idea
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Docker files
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Testing
+coverage
+*.lcov
+
+# Logs
+logs
+*.log
+
+# Cache
+.npm
+.eslintcache

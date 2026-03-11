@@ -1,19 +1,22 @@
 # Build stage
-FROM node:18-alpine AS build
+FROM node:20 AS build
 
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies with clean cache
+RUN npm cache clean --force && npm ci --prefer-offline --no-audit --no-fund
 
 # Copy source code
 COPY . .
 
-# Build the application
-RUN npm run build
+# Show Node and npm versions for debugging
+RUN node --version && npm --version
+
+# Build the application for production with increased memory limit
+RUN NODE_OPTIONS="--max-old-space-size=4096" npm run build:prod
 
 # Production stage
 FROM nginx:alpine
