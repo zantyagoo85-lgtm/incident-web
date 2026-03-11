@@ -1,0 +1,58 @@
+name: Auto-close Issues
+
+on:
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  auto-close-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract and close issues
+        run: |
+          # Obtener el último commit message
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          echo "Commit message: $COMMIT_MESSAGE"
+          
+          # Extraer números de issue usando múltiples patrones
+          ISSUES=$(echo "$COMMIT_MESSAGE" | grep -oE '(fixes|fix|closes|closed|resolves|resuelve) #[0-9]+' | grep -oE '[0-9]+' | sort -u)
+          
+          if [ -n "$ISSUES" ]; then
+            echo "Issues found: $ISSUES"
+            
+            # Cerrar cada issue encontrado
+            for issue in $ISSUES; do
+              echo "Closing issue #$issue"
+              gh issue close "$issue" --comment "✅ **Issue cerrado automáticamente**
+              
+              ## 🎉 Resolución
+              
+              Este issue ha sido resuelto y cerrado automáticamente por el commit:
+              
+              \`\`\`
+              $COMMIT_MESSAGE
+              \`\`\`
+              
+              ---
+              
+              **Estado**: ✅ Completado  
+              **Versión**: $(git rev-parse --short HEAD)  
+              **Fecha**: $(date '+%Y-%m-%d %H:%M:%S')
+              
+              *Este comentario fue generado automáticamente por GitHub Actions*
+              "
+            done
+          else
+            echo "No issues found in commit message"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

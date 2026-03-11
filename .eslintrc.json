@@ -1,0 +1,53 @@
+{
+  "root": true,
+  "ignorePatterns": ["projects/**/*"],
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@angular-eslint/recommended",
+        "plugin:@angular-eslint/template/process-inline-templates"
+      ],
+      "rules": {
+        "@angular-eslint/directive-selector": "off",
+        "@angular-eslint/component-selector": "off",
+        "@angular-eslint/no-input-rename": "off",
+        "@angular-eslint/no-output-rename": "off",
+        "@angular-eslint/no-output-on-prefix": "off",
+        "@angular-eslint/no-inputs-metadata-property": "off",
+        "@angular-eslint/no-outputs-metadata-property": "off",
+        "@angular-eslint/no-host-metadata-property": "off",
+        "@angular-eslint/no-conflicting-lifecycle": "off",
+        "@angular-eslint/no-lifecycle-call": "off",
+        "@angular-eslint/use-lifecycle-interface": "off",
+        "@angular-eslint/no-forward-ref": "off",
+        "@angular-eslint/no-output-native": "off",
+        "@angular-eslint/no-input-native": "off",
+        "@angular-eslint/prefer-inject": "off",
+        "@typescript-eslint/no-unused-vars": "warn",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/explicit-member-accessibility": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/prefer-readonly": "off"
+      }
+    },
+    {
+      "files": ["*.html"],
+      "extends": [
+        "plugin:@angular-eslint/template/recommended",
+        "plugin:@angular-eslint/template/accessibility"
+      ],
+      "rules": {
+        "@angular-eslint/template/banana-in-box": "off",
+        "@angular-eslint/template/click-events-have-key-events": "off",
+        "@angular-eslint/template/conditional-complexity": "off",
+        "@angular-eslint/template/eqeqeq-is-bad": "off",
+        "@angular-eslint/template/no-negated-async": "off",
+        "@angular-eslint/template/no-positive-tabindex": "off",
+        "@angular-eslint/template/prefer-control-flow": "off"
+      }
+    }
+  ]
+}

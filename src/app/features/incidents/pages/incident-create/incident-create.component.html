@@ -1,0 +1,89 @@
+<div class="container">
+  <div class="page-header">
+    <button mat-icon-button (click)="cancel()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Crear Nuevo Incidente</h1>
+    <p>Registra un nuevo incidente en el sistema</p>
+  </div>
+
+  <mat-card class="form-card">
+    <mat-card-content>
+      <form [formGroup]="incidentForm" (ngSubmit)="onSubmit()" class="incident-form">
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Título del incidente</mat-label>
+            <input matInput formControlName="title" placeholder="Ej: Pago falla al confirmar" />
+            <mat-error
+              *ngIf="incidentForm.get('title')?.errors && incidentForm.get('title')?.touched"
+            >
+              {{ getErrorMessage('title') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descripción</mat-label>
+            <textarea
+              matInput
+              formControlName="description"
+              placeholder="Describe detalladamente el incidente..."
+              rows="4"
+            ></textarea>
+            <mat-error
+              *ngIf="
+                incidentForm.get('description')?.errors && incidentForm.get('description')?.touched
+              "
+            >
+              {{ getErrorMessage('description') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Severidad</mat-label>
+            <mat-select formControlName="severity">
+              <mat-option *ngFor="let severity of severityOptions" [value]="severity">
+                {{ getSeverityLabel(severity) }}
+              </mat-option>
+            </mat-select>
+            <mat-error
+              *ngIf="incidentForm.get('severity')?.errors && incidentForm.get('severity')?.touched"
+            >
+              {{ getErrorMessage('severity') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>ID del Servicio</mat-label>
+            <input matInput formControlName="serviceId" placeholder="Ej: payments-api" />
+            <mat-hint>Identificador del servicio afectado</mat-hint>
+            <mat-error
+              *ngIf="
+                incidentForm.get('serviceId')?.errors && incidentForm.get('serviceId')?.touched
+              "
+            >
+              {{ getErrorMessage('serviceId') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="incidentForm.invalid || loading"
+          >
+            <mat-icon *ngIf="!loading">save</mat-icon>
+            <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+            {{ loading ? 'Guardando...' : 'Guardar Incidente' }}
+          </button>
+
+          <button mat-stroked-button type="button" (click)="cancel()" [disabled]="loading">
+            <mat-icon>cancel</mat-icon>
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

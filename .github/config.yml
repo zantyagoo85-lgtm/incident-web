@@ -1,0 +1,4 @@
+blank_issues_enabled: false
+issue_templates:
+  - .github/ISSUE_TEMPLATE/bug_report.md
+  - .github/ISSUE_TEMPLATE/feature_request.md
