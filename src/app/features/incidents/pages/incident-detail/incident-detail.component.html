@@ -1,0 +1,137 @@
+<div class="container">
+  <div class="page-header">
+    <button mat-icon-button (click)="goBack()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Detalle del Incidente</h1>
+    <p>Información completa y línea de tiempo de eventos</p>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Cargando detalles del incidente...</p>
+  </div>
+
+  <div *ngIf="!loading && incident" class="content-grid">
+    <div class="main-content">
+      <mat-card class="incident-card">
+        <mat-card-header>
+          <mat-card-title>{{ incident.title }}</mat-card-title>
+          <mat-card-subtitle>ID: {{ incident.id }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="incident-info">
+            <div class="info-row">
+              <span class="label">Descripción:</span>
+              <p class="description">{{ incident.description }}</p>
+            </div>
+
+            <div class="info-row">
+              <span class="label">Servicio:</span>
+              <code>{{ incident.serviceId }}</code>
+            </div>
+
+            <div class="info-row">
+              <span class="label">Severidad:</span>
+              <mat-chip 
+                [ngStyle]="{ backgroundColor: getSeverityColor(incident.severity) }"
+                class="severity-chip">
+                {{ getSeverityLabel(incident.severity) }}
+              </mat-chip>
+            </div>
+
+            <div class="info-row">
+              <span class="label">Estado:</span>
+              <mat-chip 
+                [ngStyle]="{ backgroundColor: getStatusColor(incident.status) }"
+                class="status-chip">
+                {{ getStatusLabel(incident.status) }}
+              </mat-chip>
+            </div>
+
+            <div class="info-row">
+              <span class="label">Creado:</span>
+              <span>{{ formatDate(incident.createdAt) }}</span>
+            </div>
+
+            <div class="info-row">
+              <span class="label">Actualizado:</span>
+              <span>{{ formatDate(incident.updatedAt) }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="timeline-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon class="title-icon">timeline</mat-icon>
+            Línea de Tiempo
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="!incident.events || incident.events.length === 0" class="no-events">
+            <mat-icon>history</mat-icon>
+            <p>No hay eventos registrados</p>
+          </div>
+
+          <div *ngIf="incident.events && incident.events.length > 0" class="timeline">
+            <div *ngFor="let event of incident.events; let last = last" class="timeline-item">
+              <div class="timeline-marker">
+                <mat-icon class="timeline-icon">circle</mat-icon>
+                <div class="timeline-line" [class.hidden]="last"></div>
+              </div>
+              <div class="timeline-content">
+                <div class="event-header">
+                  <span class="event-type">{{ getEventTypeLabel(event.type) }}</span>
+                  <span class="event-time">{{ formatDate(event.occurredAt) }}</span>
+                </div>
+                <div class="event-message">
+                  {{ event.payload && event.payload['message'] }}
+                </div>
+                <div *ngIf="event.payload['userId']" class="event-user">
+                  Por: {{ event.payload['userId'] }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="sidebar">
+      <mat-card class="actions-card">
+        <mat-card-header>
+          <mat-card-title>Acciones</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="action-buttons">
+            <button mat-raised-button 
+                    color="primary" 
+                    (click)="updateStatus('IN_PROGRESS')"
+                    [disabled]="incident.status === 'IN_PROGRESS'">
+              <mat-icon>play_arrow</mat-icon>
+              En Progreso
+            </button>
+
+            <button mat-raised-button 
+                    color="accent" 
+                    (click)="updateStatus('RESOLVED')"
+                    [disabled]="incident.status === 'RESOLVED'">
+              <mat-icon>check_circle</mat-icon>
+              Resuelto
+            </button>
+
+            <button mat-raised-button 
+                    color="warn" 
+                    (click)="updateStatus('OPEN')"
+                    [disabled]="incident.status === 'OPEN'">
+              <mat-icon>refresh</mat-icon>
+              Reabrir
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

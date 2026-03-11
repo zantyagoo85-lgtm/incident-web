@@ -1,0 +1,71 @@
+{
+  "root": true,
+  "ignorePatterns": [
+    "projects/**/*"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "*.ts"
+      ],
+      "extends": [
+        "eslint:recommended",
+        "@typescript-eslint/recommended",
+        "@angular-eslint/recommended",
+        "@angular-eslint/recommended-plugin",
+        "@angular-eslint/template/process-inline-templates"
+      ],
+      "rules": {
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            "type": "attribute",
+            "prefix": "app",
+            "style": "camelCase"
+          }
+        ],
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "type": "element",
+            "prefix": "app",
+            "style": "kebab-case"
+          }
+        ],
+        "@angular-eslint/no-input-rename": "error",
+        "@angular-eslint/no-output-rename": "error",
+        "@angular-eslint/no-output-on-prefix": "error",
+        "@angular-eslint/no-inputs-metadata-property": "error",
+        "@angular-eslint/no-outputs-metadata-property": "error",
+        "@angular-eslint/no-host-metadata-property": "error",
+        "@angular-eslint/no-conflicting-lifecycle": "error",
+        "@angular-eslint/no-lifecycle-call": "error",
+        "@angular-eslint/no-unused-lifecycle-methods": "error",
+        "@angular-eslint/use-lifecycle-interface": "error",
+        "@angular-eslint/no-forward-ref": "error",
+        "@angular-eslint/no-output-native": "error",
+        "@angular-eslint/no-input-native": "error",
+        "@typescript-eslint/no-unused-vars": "error",
+        "@typescript-eslint/explicit-function-return-type": "error",
+        "@typescript-eslint/explicit-member-accessibility": "error",
+        "@typescript-eslint/prefer-readonly": "error"
+      }
+    },
+    {
+      "files": [
+        "*.html"
+      ],
+      "extends": [
+        "@angular-eslint/template/recommended"
+      ],
+      "rules": {
+        "@angular-eslint/template/banana-in-box": "error",
+        "@angular-eslint/template/click-events-have-key-events": "error",
+        "@angular-eslint/template/conditional-complexity": "error",
+        "@angular-eslint/template/eqeqeq-is-bad": "error",
+        "@angular-eslint/template/no-negated-async": "error",
+        "@angular-eslint/template/no-positive-tabindex": "error"
+      }
+    }
+  ]
+}

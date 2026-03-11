@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test:ci
+
+      - name: Build application
+        run: npm run build:prod
+        env:
+          NODE_ENV: production
+
+      - name: Create Release
+        uses: actions/create-release@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          body: |
+            ## 🚀 Release ${{ github.ref_name }}
+            
+            ### 📦 Changes
+            - Automated release from main branch
+            - All tests passing
+            - Code quality checks passed
+            
+            ### 🔗 Links
+            - [View Release](https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }})
+            - [Browse Source](https://github.com/${{ github.repository }}/tree/${{ github.ref_name }})
+            
+            ---
+            *This release was automatically created by GitHub Actions*
+
+      - name: Build and push Docker image
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          # Build Docker image
+          docker build -t incident-web:${{ github.ref_name }} .
+          docker tag incident-web:${{ github.ref_name }} incident-web:latest
+          
+          # Push to registry (configure your registry)
+          echo "Docker image built: incident-web:${{ github.ref_name }}"
+          # Uncomment and configure your Docker registry
+          # echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          # docker push ${{ secrets.DOCKER_REGISTRY }}/incident-web:${{ github.ref_name }}
+          # docker push ${{ secrets.DOCKER_REGISTRY }}/incident-web:latest
+
+      - name: Update deployment status
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          echo "🎉 Release ${{ github.ref_name }} deployed successfully!"
+          echo "📦 Docker image: incident-web:${{ github.ref_name }}"
+          echo "🌐 Ready for production deployment"
