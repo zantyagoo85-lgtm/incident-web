@@ -130,7 +130,7 @@ export class MockService {
     if (filter.sort) {
       filteredIncidents.sort((a, b) => {
         const severityOrder = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
-        
+
         switch (filter.sort) {
           case 'createdAt':
             return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
