@@ -94,7 +94,7 @@ export class IncidentListComponent implements OnInit {
       pageSize: 10,
       sort: 'createdAt_desc',
     };
-    this.loadIncidents();
+    this.applyFilters();
   }
 
   onPageChange(event: { pageIndex: number; pageSize: number }): void {

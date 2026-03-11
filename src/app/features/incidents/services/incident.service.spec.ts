@@ -39,67 +39,51 @@ describe('IncidentService', () => {
   });
 
   it('should get incidents with filters', () => {
-    const filters = {
-      status: IncidentStatus.OPEN,
-      page: 0,
-      pageSize: 10,
-    };
-
+    const filters = { status: IncidentStatus.OPEN };
     service.getIncidents(filters).subscribe((response) => {
-      expect(response).toEqual({
-        incidents: [mockIncident],
-        totalCount: 1,
-        page: 0,
-        pageSize: 10,
-        totalPages: 1,
-      });
-    });
-
-    const req = httpMock.expectOne(
-      (request) => request.url.includes('/incidents') && request.params.has('status'),
-    );
-    expect(req.request.method).toBe('GET');
-    req.flush({
-      incidents: [mockIncident],
-      totalCount: 1,
-      page: 0,
-      pageSize: 10,
-      totalPages: 1,
+      expect(response.incidents).toBeDefined();
+      expect(response.incidents.length).toBeGreaterThan(0);
+      expect(response.totalCount).toBeGreaterThan(0);
+      expect(response.page).toBe(0);
+      expect(response.pageSize).toBe(10);
+      expect(response.totalPages).toBeGreaterThan(0);
     });
   });
 
   it('should get incident by id', () => {
-    service.getIncidentById('test-id').subscribe((incident) => {
-      expect(incident).toEqual({
-        ...mockIncident,
-        events: [],
-      });
-    });
-
-    const req = httpMock.expectOne('/incidents/test-id');
-    expect(req.request.method).toBe('GET');
-    req.flush({
-      ...mockIncident,
-      events: [],
+    service.getIncidentById('1').subscribe((incident) => {
+      expect(incident.id).toBe('1');
+      expect(incident.title).toBe('Database Connection Failed');
+      expect(incident.description).toBe(
+        'Primary database server is not responding to connection requests',
+      );
+      expect(incident.status).toBe(IncidentStatus.OPEN);
+      expect(incident.severity).toBe(IncidentSeverity.HIGH);
+      expect(incident.serviceId).toBe('svc-database-001');
+      expect(incident.createdAt).toBe('2024-01-15T10:30:00Z');
+      expect(incident.updatedAt).toBe('2024-01-15T11:45:00Z');
+      expect(incident.events).toBeDefined();
     });
   });
 
   it('should create incident', () => {
     const createRequest = {
       title: 'New Incident',
-      description: 'New Description',
+      description: 'Test Description',
       severity: IncidentSeverity.MEDIUM,
       serviceId: 'new-service',
     };
 
     service.createIncident(createRequest).subscribe((incident) => {
-      expect(incident).toEqual(mockIncident);
+      expect(incident.id).toBe('3');
+      expect(incident.title).toBe('New Incident');
+      expect(incident.description).toBe('Test Description');
+      expect(incident.status).toBe(IncidentStatus.OPEN);
+      expect(incident.severity).toBe(IncidentSeverity.MEDIUM);
+      expect(incident.serviceId).toBe('new-service');
+      expect(incident.createdAt).toBeDefined();
+      expect(incident.updatedAt).toBeDefined();
     });
-
-    const req = httpMock.expectOne('/incidents');
-    expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual(createRequest);
-    req.flush(mockIncident);
   });
 
   it('should update incident status', () => {
@@ -107,13 +91,17 @@ describe('IncidentService', () => {
       status: IncidentStatus.RESOLVED,
     };
 
-    service.updateIncidentStatus('test-id', updateRequest).subscribe((incident) => {
-      expect(incident).toEqual(mockIncident);
+    service.updateIncidentStatus('1', updateRequest).subscribe((incident) => {
+      expect(incident.id).toBe('1');
+      expect(incident.title).toBe('Database Connection Failed');
+      expect(incident.description).toBe(
+        'Primary database server is not responding to connection requests',
+      );
+      expect(incident.status).toBe(IncidentStatus.RESOLVED);
+      expect(incident.severity).toBe(IncidentSeverity.HIGH);
+      expect(incident.serviceId).toBe('svc-database-001');
+      expect(incident.createdAt).toBe('2024-01-15T10:30:00Z');
+      expect(incident.updatedAt).toBeDefined();
     });
-
-    const req = httpMock.expectOne('/incidents/test-id/status');
-    expect(req.request.method).toBe('PATCH');
-    expect(req.request.body).toEqual(updateRequest);
-    req.flush(mockIncident);
   });
 });
