@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiBaseUrl: 'http://incident-api:5000/api',
-  dockerApiBaseUrl: 'http://incident-api:8080/api',
+  apiBaseUrl: 'https://localhost:2021/api',
+  dockerApiBaseUrl: 'http://incident-api:5000/api',
   isDocker: true,
 };
