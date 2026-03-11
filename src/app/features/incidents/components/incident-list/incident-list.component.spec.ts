@@ -51,13 +51,13 @@ describe('IncidentListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load incidents on init', () => {
-    const spy = jest.spyOn(incidentService, 'getIncidents').mockReturnValue({
-      subscribe: jest.fn(),
+  it('should load incidents on initialization', () => {
+    const spy = spyOn(incidentService, 'getIncidents').and.returnValue({
+      subscribe: jasmine.createSpy(),
     } as any);
 
     component.ngOnInit();
@@ -77,8 +77,8 @@ describe('IncidentListComponent', () => {
     component.filters.q = 'test';
     component.filters.status = IncidentStatus.OPEN;
 
-    const spy = jest.spyOn(incidentService, 'getIncidents').mockReturnValue({
-      subscribe: jest.fn(),
+    const spy = jasmine.createSpyOn(incidentService, 'getIncidents').and.returnValue({
+      subscribe: jasmine.createSpy('subscribe'),
     } as any);
 
     component.applyFilters();
