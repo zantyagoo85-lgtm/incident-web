@@ -7,9 +7,15 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class ApiService {
-  private readonly baseUrl = environment.apiBaseUrl;
+  private readonly baseUrl: string;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    // Use Docker URL when in production or explicitly in Docker environment
+    this.baseUrl =
+      environment.isDocker || environment.production
+        ? environment.dockerApiBaseUrl
+        : environment.apiBaseUrl;
+  }
 
   get<T>(endpoint: string, params?: Record<string, any>): Observable<T> {
     let httpParams = new HttpParams();

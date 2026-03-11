@@ -5,35 +5,12 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { IncidentListComponent } from './incident-list.component';
 import { IncidentService } from '../../../../core/services/incident.service';
-import { Incident, IncidentStatus, IncidentSeverity } from '../../../../models';
+import { IncidentStatus, IncidentSeverity } from '../../../../models';
 
 describe('IncidentListComponent', () => {
   let component: IncidentListComponent;
   let fixture: ComponentFixture<IncidentListComponent>;
   let incidentService: IncidentService;
-
-  const mockIncidents: Incident[] = [
-    {
-      id: '1',
-      title: 'Test Incident 1',
-      description: 'Description 1',
-      severity: IncidentSeverity.HIGH,
-      status: IncidentStatus.OPEN,
-      serviceId: 'service-1',
-      createdAt: '2023-01-01T00:00:00Z',
-      updatedAt: '2023-01-01T00:00:00Z',
-    },
-    {
-      id: '2',
-      title: 'Test Incident 2',
-      description: 'Description 2',
-      severity: IncidentSeverity.MEDIUM,
-      status: IncidentStatus.RESOLVED,
-      serviceId: 'service-2',
-      createdAt: '2023-01-02T00:00:00Z',
-      updatedAt: '2023-01-02T00:00:00Z',
-    },
-  ];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

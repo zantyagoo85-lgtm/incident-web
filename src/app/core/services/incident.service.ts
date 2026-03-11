@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MockService } from './mock.service';
+import { ApiService } from './api.service';
 import {
   Incident,
   CreateIncidentRequest,
@@ -14,21 +14,25 @@ import {
   providedIn: 'root',
 })
 export class IncidentService {
-  constructor(private mockService: MockService) {}
+  constructor(private apiService: ApiService) {}
 
   getIncidents(filter: IncidentFilter): Observable<IncidentListResponse> {
-    return this.mockService.getIncidents(filter);
+    return this.apiService.get<IncidentListResponse>('/incidents', filter);
   }
 
   getIncidentById(id: string): Observable<Incident & { events: IncidentEvent[] }> {
-    return this.mockService.getIncidentById(id);
+    return this.apiService.get<Incident & { events: IncidentEvent[] }>(`/incidents/${id}`);
   }
 
   createIncident(request: CreateIncidentRequest): Observable<Incident> {
-    return this.mockService.createIncident(request);
+    return this.apiService.post<Incident>('/incidents', request);
   }
 
   updateIncidentStatus(id: string, request: UpdateIncidentStatusRequest): Observable<Incident> {
-    return this.mockService.updateIncidentStatus(id, request);
+    return this.apiService.patch<Incident>(`/incidents/${id}/status`, request);
+  }
+
+  getIncidentTimeline(id: string): Observable<Incident & { events: IncidentEvent[] }> {
+    return this.apiService.get<Incident & { events: IncidentEvent[] }>(`/incidents/${id}`);
   }
 }
