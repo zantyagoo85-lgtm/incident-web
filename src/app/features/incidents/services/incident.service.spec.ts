@@ -56,7 +56,7 @@ describe('IncidentService', () => {
       expect(response.totalPages).toBe(1);
     });
 
-    const req = httpMock.expectOne('https://localhost:2021/api/incidents?status=OPEN');
+    const req = httpMock.expectOne('http://incident-api:5000/api/incidents?status=OPEN');
     expect(req.request.method).toBe('GET');
     req.flush(mockResponse);
   });
@@ -88,7 +88,7 @@ describe('IncidentService', () => {
       expect(incident.events).toBeDefined();
     });
 
-    const req = httpMock.expectOne('https://localhost:2021/api/incidents/1');
+    const req = httpMock.expectOne('http://incident-api:5000/api/incidents/1');
     expect(req.request.method).toBe('GET');
     req.flush(mockIncident);
   });
@@ -123,7 +123,7 @@ describe('IncidentService', () => {
       expect(incident.updatedAt).toBeDefined();
     });
 
-    const req = httpMock.expectOne('https://localhost:2021/api/incidents');
+    const req = httpMock.expectOne('http://incident-api:5000/api/incidents');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(createRequest);
     req.flush(mockCreatedIncident);
@@ -158,7 +158,7 @@ describe('IncidentService', () => {
       expect(incident.updatedAt).toBe('2024-01-15T12:00:00Z');
     });
 
-    const req = httpMock.expectOne('https://localhost:2021/api/incidents/1/status');
+    const req = httpMock.expectOne('http://incident-api:5000/api/incidents/1/status');
     expect(req.request.method).toBe('PATCH');
     expect(req.request.body).toEqual(updateRequest);
     req.flush(mockUpdatedIncident);

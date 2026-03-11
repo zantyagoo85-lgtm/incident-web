@@ -22,7 +22,7 @@ RUN NODE_OPTIONS="--max-old-space-size=4096" npm run build:prod
 FROM nginx:alpine
 
 # Copy built app to nginx
-COPY --from=build /app/dist/incident-web /usr/share/nginx/html
+COPY --from=build /app/dist/incident-web/browser /usr/share/nginx/html
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
