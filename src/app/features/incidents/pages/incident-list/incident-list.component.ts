@@ -115,10 +115,10 @@ export class IncidentListComponent implements OnInit {
 
   getSeverityLabel(severity: IncidentSeverity): string {
     const labels: Record<IncidentSeverity, string> = {
-      [IncidentSeverity.LOW]: 'Bajo',
-      [IncidentSeverity.MEDIUM]: 'Medio',
-      [IncidentSeverity.HIGH]: 'Alto',
-      [IncidentSeverity.CRITICAL]: 'Crítico',
+      [IncidentSeverity.LOW]: 'Baja',
+      [IncidentSeverity.MEDIUM]: 'Media',
+      [IncidentSeverity.HIGH]: 'Alta',
+      [IncidentSeverity.CRITICAL]: 'Crítica',
     };
     return labels[severity] || severity;
   }

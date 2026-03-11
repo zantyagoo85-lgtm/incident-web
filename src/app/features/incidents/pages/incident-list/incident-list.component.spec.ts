@@ -63,10 +63,6 @@ describe('IncidentListComponent', () => {
     component.ngOnInit();
 
     expect(spy).toHaveBeenCalledWith({
-      status: '',
-      severity: '',
-      serviceId: '',
-      q: '',
       page: 0,
       pageSize: 10,
       sort: 'createdAt_desc',
@@ -84,13 +80,11 @@ describe('IncidentListComponent', () => {
     component.applyFilters();
 
     expect(spy).toHaveBeenCalledWith({
-      status: IncidentStatus.OPEN,
-      severity: '',
-      serviceId: '',
-      q: 'test',
       page: 0,
       pageSize: 10,
       sort: 'createdAt_desc',
+      q: 'test',
+      status: IncidentStatus.OPEN,
     });
   });
 
@@ -103,10 +97,9 @@ describe('IncidentListComponent', () => {
     component.clearFilters();
 
     expect(component.filters).toEqual({
-      status: '',
-      severity: '',
-      serviceId: '',
-      q: '',
+      page: 0,
+      pageSize: 10,
+      sort: 'createdAt_desc',
     });
     expect(spy).toHaveBeenCalled();
   });
