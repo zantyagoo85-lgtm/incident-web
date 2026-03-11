@@ -9,7 +9,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 
 import { IncidentService } from '../../../../core/services/incident.service';
 import { CreateIncidentRequest, IncidentSeverity } from '../../../../models';
@@ -27,10 +33,10 @@ import { CreateIncidentRequest, IncidentSeverity } from '../../../../models';
     MatSelectModule,
     MatProgressSpinnerModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   templateUrl: './incident-create.component.html',
-  styleUrl: './incident-create.component.scss'
+  styleUrl: './incident-create.component.scss',
 })
 export class IncidentCreateComponent {
   incidentForm: FormGroup;
@@ -41,7 +47,7 @@ export class IncidentCreateComponent {
     private fb: FormBuilder,
     private incidentService: IncidentService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {
     this.incidentForm = this.createIncidentForm();
   }
@@ -49,9 +55,12 @@ export class IncidentCreateComponent {
   private createIncidentForm(): FormGroup {
     return this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
-      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]],
+      description: [
+        '',
+        [Validators.required, Validators.minLength(10), Validators.maxLength(1000)],
+      ],
       severity: [IncidentSeverity.MEDIUM, [Validators.required]],
-      serviceId: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]]
+      serviceId: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
     });
   }
 
@@ -85,7 +94,7 @@ export class IncidentCreateComponent {
         this.snackBar.open('Incidente creado exitosamente', 'Cerrar', {
           duration: 3000,
           horizontalPosition: 'center',
-          verticalPosition: 'top'
+          verticalPosition: 'top',
         });
         this.router.navigate(['/incidents', incident.id]);
       },
@@ -94,13 +103,13 @@ export class IncidentCreateComponent {
         this.snackBar.open('Error al crear el incidente', 'Cerrar', {
           duration: 5000,
           horizontalPosition: 'center',
-          verticalPosition: 'top'
+          verticalPosition: 'top',
         });
         this.loading = false;
       },
       complete: () => {
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -113,7 +122,7 @@ export class IncidentCreateComponent {
       [IncidentSeverity.LOW]: 'Baja',
       [IncidentSeverity.MEDIUM]: 'Media',
       [IncidentSeverity.HIGH]: 'Alta',
-      [IncidentSeverity.CRITICAL]: 'Crítica'
+      [IncidentSeverity.CRITICAL]: 'Crítica',
     };
     return severityMap[severity] || severity;
   }

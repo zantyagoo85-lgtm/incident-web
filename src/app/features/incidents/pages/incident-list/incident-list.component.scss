@@ -40,12 +40,12 @@
     padding: 12px 24px;
     font-size: 1rem;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 
     mat-icon {
@@ -307,7 +307,7 @@
 
   .incidents-table {
     min-width: 100%;
-    
+
     .status-badge,
     .severity-badge {
       font-size: 0.7rem;

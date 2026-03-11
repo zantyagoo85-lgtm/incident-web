@@ -16,13 +16,13 @@ describe('IncidentService', () => {
     status: IncidentStatus.OPEN,
     serviceId: 'test-service',
     createdAt: '2023-01-01T00:00:00Z',
-    updatedAt: '2023-01-01T00:00:00Z'
+    updatedAt: '2023-01-01T00:00:00Z',
   };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [IncidentService]
+      providers: [IncidentService],
     });
 
     service = TestBed.inject(IncidentService);
@@ -41,22 +41,21 @@ describe('IncidentService', () => {
     const filters = {
       status: IncidentStatus.OPEN,
       page: 0,
-      pageSize: 10
+      pageSize: 10,
     };
 
-    service.getIncidents(filters).subscribe(response => {
+    service.getIncidents(filters).subscribe((response) => {
       expect(response).toEqual({
         incidents: [mockIncident],
         totalCount: 1,
         page: 0,
         pageSize: 10,
-        totalPages: 1
+        totalPages: 1,
       });
     });
 
-    const req = httpMock.expectOne(request => 
-      request.url.includes('/incidents') && 
-      request.params.has('status')
+    const req = httpMock.expectOne(
+      (request) => request.url.includes('/incidents') && request.params.has('status'),
     );
     expect(req.request.method).toBe('GET');
     req.flush({
@@ -64,15 +63,15 @@ describe('IncidentService', () => {
       totalCount: 1,
       page: 0,
       pageSize: 10,
-      totalPages: 1
+      totalPages: 1,
     });
   });
 
   it('should get incident by id', () => {
-    service.getIncidentById('test-id').subscribe(incident => {
+    service.getIncidentById('test-id').subscribe((incident) => {
       expect(incident).toEqual({
         ...mockIncident,
-        events: []
+        events: [],
       });
     });
 
@@ -80,7 +79,7 @@ describe('IncidentService', () => {
     expect(req.request.method).toBe('GET');
     req.flush({
       ...mockIncident,
-      events: []
+      events: [],
     });
   });
 
@@ -89,10 +88,10 @@ describe('IncidentService', () => {
       title: 'New Incident',
       description: 'New Description',
       severity: IncidentSeverity.MEDIUM,
-      serviceId: 'new-service'
+      serviceId: 'new-service',
     };
 
-    service.createIncident(createRequest).subscribe(incident => {
+    service.createIncident(createRequest).subscribe((incident) => {
       expect(incident).toEqual(mockIncident);
     });
 
@@ -104,10 +103,10 @@ describe('IncidentService', () => {
 
   it('should update incident status', () => {
     const updateRequest = {
-      status: IncidentStatus.RESOLVED
+      status: IncidentStatus.RESOLVED,
     };
 
-    service.updateIncidentStatus('test-id', updateRequest).subscribe(incident => {
+    service.updateIncidentStatus('test-id', updateRequest).subscribe((incident) => {
       expect(incident).toEqual(mockIncident);
     });
 

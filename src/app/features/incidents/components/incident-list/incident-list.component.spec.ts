@@ -21,7 +21,7 @@ describe('IncidentListComponent', () => {
       status: IncidentStatus.OPEN,
       serviceId: 'service-1',
       createdAt: '2023-01-01T00:00:00Z',
-      updatedAt: '2023-01-01T00:00:00Z'
+      updatedAt: '2023-01-01T00:00:00Z',
     },
     {
       id: '2',
@@ -31,8 +31,8 @@ describe('IncidentListComponent', () => {
       status: IncidentStatus.RESOLVED,
       serviceId: 'service-2',
       createdAt: '2023-01-02T00:00:00Z',
-      updatedAt: '2023-01-02T00:00:00Z'
-    }
+      updatedAt: '2023-01-02T00:00:00Z',
+    },
   ];
 
   beforeEach(async () => {
@@ -41,8 +41,8 @@ describe('IncidentListComponent', () => {
         IncidentListComponent,
         RouterTestingModule,
         HttpClientTestingModule,
-        NoopAnimationsModule
-      ]
+        NoopAnimationsModule,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(IncidentListComponent);
@@ -57,7 +57,7 @@ describe('IncidentListComponent', () => {
 
   it('should load incidents on init', () => {
     const spy = jest.spyOn(incidentService, 'getIncidents').mockReturnValue({
-      subscribe: jest.fn()
+      subscribe: jest.fn(),
     } as any);
 
     component.ngOnInit();
@@ -69,16 +69,16 @@ describe('IncidentListComponent', () => {
       q: '',
       page: 0,
       pageSize: 10,
-      sort: 'createdAt_desc'
+      sort: 'createdAt_desc',
     });
   });
 
   it('should apply filters', () => {
     component.filters.q = 'test';
     component.filters.status = IncidentStatus.OPEN;
-    
+
     const spy = jest.spyOn(incidentService, 'getIncidents').mockReturnValue({
-      subscribe: jest.fn()
+      subscribe: jest.fn(),
     } as any);
 
     component.applyFilters();
@@ -90,14 +90,14 @@ describe('IncidentListComponent', () => {
       q: 'test',
       page: 0,
       pageSize: 10,
-      sort: 'createdAt_desc'
+      sort: 'createdAt_desc',
     });
   });
 
   it('should clear filters', () => {
     component.filters.q = 'test';
     component.filters.status = IncidentStatus.OPEN;
-    
+
     const spy = spyOn(component, 'applyFilters');
 
     component.clearFilters();
@@ -106,7 +106,7 @@ describe('IncidentListComponent', () => {
       status: '',
       severity: '',
       serviceId: '',
-      q: ''
+      q: '',
     });
     expect(spy).toHaveBeenCalled();
   });

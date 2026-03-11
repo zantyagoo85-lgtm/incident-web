@@ -9,10 +9,22 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 
 import { IncidentService } from '../../../../core/services/incident.service';
-import { Incident, IncidentStatus, IncidentSeverity, UpdateIncidentStatusRequest, IncidentEvent } from '../../../../models';
+import {
+  Incident,
+  IncidentStatus,
+  IncidentSeverity,
+  UpdateIncidentStatusRequest,
+  IncidentEvent,
+} from '../../../../models';
 import { getStatusColor } from '../../../../core/constants/status.constants';
 import { getStatusColor as getSeverityColor } from '../../../../core/constants/severity.constants';
 
@@ -29,10 +41,10 @@ import { getStatusColor as getSeverityColor } from '../../../../core/constants/s
     MatFormFieldModule,
     MatProgressSpinnerModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   templateUrl: './incident-detail.component.html',
-  styleUrl: './incident-detail.component.scss'
+  styleUrl: './incident-detail.component.scss',
 })
 export class IncidentDetailComponent implements OnInit {
   incident: Incident | null = null;
@@ -47,10 +59,10 @@ export class IncidentDetailComponent implements OnInit {
     private router: Router,
     private incidentService: IncidentService,
     private fb: FormBuilder,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {
     this.statusForm = this.fb.group({
-      status: ['', [Validators.required]]
+      status: ['', [Validators.required]],
     });
   }
 
@@ -77,11 +89,11 @@ export class IncidentDetailComponent implements OnInit {
         this.snackBar.open('Error al cargar los detalles del incidente', 'Cerrar', {
           duration: 5000,
           horizontalPosition: 'center',
-          verticalPosition: 'top'
+          verticalPosition: 'top',
         });
         this.loading = false;
         this.router.navigate(['/incidents']);
-      }
+      },
     });
   }
 
@@ -92,7 +104,7 @@ export class IncidentDetailComponent implements OnInit {
 
     this.updatingStatus = true;
     const request: UpdateIncidentStatusRequest = {
-      status: status as IncidentStatus
+      status: status as IncidentStatus,
     };
 
     this.incidentService.updateIncidentStatus(this.incident!.id, request).subscribe({
@@ -101,7 +113,7 @@ export class IncidentDetailComponent implements OnInit {
         this.snackBar.open('Estado actualizado exitosamente', 'Cerrar', {
           duration: 3000,
           horizontalPosition: 'center',
-          verticalPosition: 'top'
+          verticalPosition: 'top',
         });
         this.updatingStatus = false;
         this.loadIncidentDetail(this.incident!.id);
@@ -111,10 +123,10 @@ export class IncidentDetailComponent implements OnInit {
         this.snackBar.open('Error al actualizar el estado', 'Cerrar', {
           duration: 5000,
           horizontalPosition: 'center',
-          verticalPosition: 'top'
+          verticalPosition: 'top',
         });
         this.updatingStatus = false;
-      }
+      },
     });
   }
 
@@ -131,7 +143,7 @@ export class IncidentDetailComponent implements OnInit {
       [IncidentStatus.OPEN]: 'Abierto',
       [IncidentStatus.IN_PROGRESS]: 'En Progreso',
       [IncidentStatus.RESOLVED]: 'Resuelto',
-      [IncidentStatus.CLOSED]: 'Cerrado'
+      [IncidentStatus.CLOSED]: 'Cerrado',
     };
     return statusMap[status] || status;
   }
@@ -141,16 +153,16 @@ export class IncidentDetailComponent implements OnInit {
       [IncidentSeverity.LOW]: 'Baja',
       [IncidentSeverity.MEDIUM]: 'Media',
       [IncidentSeverity.HIGH]: 'Alta',
-      [IncidentSeverity.CRITICAL]: 'Crítica'
+      [IncidentSeverity.CRITICAL]: 'Crítica',
     };
     return severityMap[severity] || severity;
   }
 
   getEventTypeLabel(eventType: string): string {
     const eventMap: Record<string, string> = {
-      'incident_created': 'Incidente Creado',
-      'incident_status_changed': 'Estado Cambiado',
-      'service_catalog_snapshot': 'Consulta Catálogo de Servicios'
+      incident_created: 'Incidente Creado',
+      incident_status_changed: 'Estado Cambiado',
+      service_catalog_snapshot: 'Consulta Catálogo de Servicios',
     };
     return eventMap[eventType] || eventType;
   }

@@ -9,5 +9,5 @@ export const routes: Routes = [
   { path: 'incidents', component: IncidentListComponent },
   { path: 'incidents/create', component: IncidentCreateComponent },
   { path: 'incidents/:id', component: IncidentDetailComponent },
-  { path: '**', redirectTo: '' }
+  { path: '**', redirectTo: '' },
 ];

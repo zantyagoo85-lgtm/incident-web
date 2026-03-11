@@ -40,10 +40,10 @@ interface IncidentListResponse {
     MatIconModule,
     MatProgressBarModule,
     RouterLink,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   templateUrl: './incident-list.component.html',
-  styleUrls: ['./incident-list.component.scss']
+  styleUrls: ['./incident-list.component.scss'],
 })
 export class IncidentListComponent implements OnInit {
   displayedColumns: string[] = ['title', 'status', 'severity', 'serviceId', 'createdAt', 'actions'];
@@ -55,11 +55,11 @@ export class IncidentListComponent implements OnInit {
 
   statusOptions = Object.values(IncidentStatus);
   severityOptions = Object.values(IncidentSeverity);
-  
+
   filters: IncidentFilter = {
     page: 0,
     pageSize: 10,
-    sort: 'createdAt_desc'
+    sort: 'createdAt_desc',
   };
 
   constructor(private incidentService: IncidentService) {}
@@ -79,7 +79,7 @@ export class IncidentListComponent implements OnInit {
       error: (error: any) => {
         console.error('Error loading incidents:', error);
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -92,7 +92,7 @@ export class IncidentListComponent implements OnInit {
     this.filters = {
       page: 0,
       pageSize: 10,
-      sort: 'createdAt_desc'
+      sort: 'createdAt_desc',
     };
     this.loadIncidents();
   }
@@ -105,20 +105,20 @@ export class IncidentListComponent implements OnInit {
 
   getStatusLabel(status: IncidentStatus): string {
     const labels: Record<IncidentStatus, string> = {
-      [IncidentStatus.OPEN]: "Abierto",
-      [IncidentStatus.IN_PROGRESS]: "En Progreso",
-      [IncidentStatus.RESOLVED]: "Resuelto",
-      [IncidentStatus.CLOSED]: "Cerrado"
+      [IncidentStatus.OPEN]: 'Abierto',
+      [IncidentStatus.IN_PROGRESS]: 'En Progreso',
+      [IncidentStatus.RESOLVED]: 'Resuelto',
+      [IncidentStatus.CLOSED]: 'Cerrado',
     };
     return labels[status] || status;
   }
 
   getSeverityLabel(severity: IncidentSeverity): string {
     const labels: Record<IncidentSeverity, string> = {
-      [IncidentSeverity.LOW]: "Bajo",
-      [IncidentSeverity.MEDIUM]: "Medio",
-      [IncidentSeverity.HIGH]: "Alto",
-      [IncidentSeverity.CRITICAL]: "Crítico"
+      [IncidentSeverity.LOW]: 'Bajo',
+      [IncidentSeverity.MEDIUM]: 'Medio',
+      [IncidentSeverity.HIGH]: 'Alto',
+      [IncidentSeverity.CRITICAL]: 'Crítico',
     };
     return labels[severity] || severity;
   }
@@ -128,7 +128,7 @@ export class IncidentListComponent implements OnInit {
       [IncidentStatus.OPEN]: 'status-open',
       [IncidentStatus.IN_PROGRESS]: 'status-in-progress',
       [IncidentStatus.RESOLVED]: 'status-resolved',
-      [IncidentStatus.CLOSED]: 'status-closed'
+      [IncidentStatus.CLOSED]: 'status-closed',
     };
     return colors[status] || '';
   }
@@ -138,12 +138,12 @@ export class IncidentListComponent implements OnInit {
       [IncidentSeverity.LOW]: 'severity-low',
       [IncidentSeverity.MEDIUM]: 'severity-medium',
       [IncidentSeverity.HIGH]: 'severity-high',
-      [IncidentSeverity.CRITICAL]: 'severity-critical'
+      [IncidentSeverity.CRITICAL]: 'severity-critical',
     };
     return colors[severity] || '';
   }
 
   formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleString("es-ES");
+    return new Date(dateString).toLocaleString('es-ES');
   }
 }

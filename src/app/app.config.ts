@@ -14,7 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
-      useValue: { appearance: 'outline' }
-    }
-  ]
+      useValue: { appearance: 'outline' },
+    },
+  ],
 };

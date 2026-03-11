@@ -6,7 +6,7 @@ import { NavigationComponent } from './shared/components/navigation/navigation.c
   selector: 'app-root',
   imports: [RouterOutlet, NavigationComponent],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
 })
 export class App {
   protected readonly title = signal('incident-web');

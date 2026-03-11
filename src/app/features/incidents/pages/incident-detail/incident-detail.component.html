@@ -33,18 +33,20 @@
 
             <div class="info-row">
               <span class="label">Severidad:</span>
-              <mat-chip 
+              <mat-chip
                 [ngStyle]="{ backgroundColor: getSeverityColor(incident.severity) }"
-                class="severity-chip">
+                class="severity-chip"
+              >
                 {{ getSeverityLabel(incident.severity) }}
               </mat-chip>
             </div>
 
             <div class="info-row">
               <span class="label">Estado:</span>
-              <mat-chip 
+              <mat-chip
                 [ngStyle]="{ backgroundColor: getStatusColor(incident.status) }"
-                class="status-chip">
+                class="status-chip"
+              >
                 {{ getStatusLabel(incident.status) }}
               </mat-chip>
             </div>
@@ -106,26 +108,32 @@
         </mat-card-header>
         <mat-card-content>
           <div class="action-buttons">
-            <button mat-raised-button 
-                    color="primary" 
-                    (click)="updateStatus('IN_PROGRESS')"
-                    [disabled]="incident.status === 'IN_PROGRESS'">
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="updateStatus('IN_PROGRESS')"
+              [disabled]="incident.status === 'IN_PROGRESS'"
+            >
               <mat-icon>play_arrow</mat-icon>
               En Progreso
             </button>
 
-            <button mat-raised-button 
-                    color="accent" 
-                    (click)="updateStatus('RESOLVED')"
-                    [disabled]="incident.status === 'RESOLVED'">
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="updateStatus('RESOLVED')"
+              [disabled]="incident.status === 'RESOLVED'"
+            >
               <mat-icon>check_circle</mat-icon>
               Resuelto
             </button>
 
-            <button mat-raised-button 
-                    color="warn" 
-                    (click)="updateStatus('OPEN')"
-                    [disabled]="incident.status === 'OPEN'">
+            <button
+              mat-raised-button
+              color="warn"
+              (click)="updateStatus('OPEN')"
+              [disabled]="incident.status === 'OPEN'"
+            >
               <mat-icon>refresh</mat-icon>
               Reabrir
             </button>

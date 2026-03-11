@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MockService } from './mock.service';
-import { 
-  Incident, 
-  CreateIncidentRequest, 
-  UpdateIncidentStatusRequest, 
-  IncidentFilter, 
+import {
+  Incident,
+  CreateIncidentRequest,
+  UpdateIncidentStatusRequest,
+  IncidentFilter,
   IncidentListResponse,
-  IncidentEvent
+  IncidentEvent,
 } from '../../models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class IncidentService {
   constructor(private mockService: MockService) {}

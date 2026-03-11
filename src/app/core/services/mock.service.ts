@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, delay } from 'rxjs';
-import { 
-  Incident, 
-  IncidentEvent, 
+import {
+  Incident,
+  IncidentEvent,
   IncidentListResponse,
   CreateIncidentRequest,
   UpdateIncidentStatusRequest,
   IncidentFilter,
   IncidentStatus,
-  IncidentSeverity
+  IncidentSeverity,
 } from '../../models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MockService {
   private incidents: Incident[] = [
@@ -24,7 +24,7 @@ export class MockService {
       severity: IncidentSeverity.HIGH,
       serviceId: 'svc-database-001',
       createdAt: '2024-01-15T10:30:00Z',
-      updatedAt: '2024-01-15T11:45:00Z'
+      updatedAt: '2024-01-15T11:45:00Z',
     },
     {
       id: '2',
@@ -34,7 +34,7 @@ export class MockService {
       severity: IncidentSeverity.MEDIUM,
       serviceId: 'svc-api-002',
       createdAt: '2024-01-15T14:20:00Z',
-      updatedAt: '2024-01-15T15:30:00Z'
+      updatedAt: '2024-01-15T15:30:00Z',
     },
     {
       id: '3',
@@ -44,7 +44,7 @@ export class MockService {
       severity: IncidentSeverity.LOW,
       serviceId: 'svc-app-003',
       createdAt: '2024-01-14T09:15:00Z',
-      updatedAt: '2024-01-14T16:45:00Z'
+      updatedAt: '2024-01-14T16:45:00Z',
     },
     {
       id: '4',
@@ -54,7 +54,7 @@ export class MockService {
       severity: IncidentSeverity.CRITICAL,
       serviceId: 'svc-auth-004',
       createdAt: '2024-01-15T16:00:00Z',
-      updatedAt: '2024-01-15T16:00:00Z'
+      updatedAt: '2024-01-15T16:00:00Z',
     },
     {
       id: '5',
@@ -64,8 +64,8 @@ export class MockService {
       severity: IncidentSeverity.MEDIUM,
       serviceId: 'svc-storage-005',
       createdAt: '2024-01-15T12:45:00Z',
-      updatedAt: '2024-01-15T13:20:00Z'
-    }
+      updatedAt: '2024-01-15T13:20:00Z',
+    },
   ];
 
   private events: IncidentEvent[] = [
@@ -74,29 +74,32 @@ export class MockService {
       type: 'status_change',
       occurredAt: '2024-01-15T10:30:00Z',
       payload: { message: 'Incident created', userId: 'user-001' },
-      metadata: { correlationId: 'corr-001' }
+      metadata: { correlationId: 'corr-001' },
     },
     {
       incidentId: '1',
       type: 'status_change',
       occurredAt: '2024-01-15T11:00:00Z',
       payload: { message: 'Status changed to IN_PROGRESS', userId: 'user-002' },
-      metadata: { correlationId: 'corr-002' }
+      metadata: { correlationId: 'corr-002' },
     },
     {
       incidentId: '1',
       type: 'comment',
       occurredAt: '2024-01-15T11:30:00Z',
-      payload: { message: 'Database team is investigating the connection issue', userId: 'user-003' },
-      metadata: { correlationId: 'corr-003' }
+      payload: {
+        message: 'Database team is investigating the connection issue',
+        userId: 'user-003',
+      },
+      metadata: { correlationId: 'corr-003' },
     },
     {
       incidentId: '1',
       type: 'status_change',
       occurredAt: '2024-01-15T11:45:00Z',
       payload: { message: 'Status changed to OPEN', userId: 'user-002' },
-      metadata: { correlationId: 'corr-004' }
-    }
+      metadata: { correlationId: 'corr-004' },
+    },
   ];
 
   getIncidents(filter: IncidentFilter): Observable<IncidentListResponse> {
@@ -104,19 +107,22 @@ export class MockService {
 
     // Apply filters
     if (filter.status) {
-      filteredIncidents = filteredIncidents.filter(inc => inc.status === filter.status);
+      filteredIncidents = filteredIncidents.filter((inc) => inc.status === filter.status);
     }
     if (filter.severity) {
-      filteredIncidents = filteredIncidents.filter(inc => inc.severity === filter.severity);
+      filteredIncidents = filteredIncidents.filter((inc) => inc.severity === filter.severity);
     }
     if (filter.serviceId) {
-      filteredIncidents = filteredIncidents.filter(inc => inc.serviceId.includes(filter.serviceId!));
+      filteredIncidents = filteredIncidents.filter((inc) =>
+        inc.serviceId.includes(filter.serviceId!),
+      );
     }
     if (filter.q) {
       const searchTerm = filter.q.toLowerCase();
-      filteredIncidents = filteredIncidents.filter(inc => 
-        inc.title.toLowerCase().includes(searchTerm) || 
-        inc.description.toLowerCase().includes(searchTerm)
+      filteredIncidents = filteredIncidents.filter(
+        (inc) =>
+          inc.title.toLowerCase().includes(searchTerm) ||
+          inc.description.toLowerCase().includes(searchTerm),
       );
     }
 
@@ -148,21 +154,23 @@ export class MockService {
       totalCount: filteredIncidents.length,
       page,
       pageSize,
-      totalPages
+      totalPages,
     }).pipe(delay(500)); // Simulate network delay
   }
 
   getIncidentById(id: string): Observable<Incident & { events: IncidentEvent[] }> {
-    const incident = this.incidents.find(inc => inc.id === id);
-    const events = this.events.filter(evt => evt.incidentId === id);
-    
+    const incident = this.incidents.find((inc) => inc.id === id);
+    const events = this.events.filter((evt) => evt.incidentId === id);
+
     if (!incident) {
       throw new Error('Incident not found');
     }
 
     return of({
       ...incident,
-      events: events.sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime())
+      events: events.sort(
+        (a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime(),
+      ),
     }).pipe(delay(300));
   }
 
@@ -172,7 +180,7 @@ export class MockService {
       ...request,
       status: IncidentStatus.OPEN,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     this.incidents.unshift(newIncident);
@@ -183,14 +191,14 @@ export class MockService {
       type: 'status_change',
       occurredAt: new Date().toISOString(),
       payload: { message: 'Incident created', userId: 'current-user' },
-      metadata: { correlationId: `corr-${this.events.length + 1}` }
+      metadata: { correlationId: `corr-${this.events.length + 1}` },
     });
 
     return of(newIncident).pipe(delay(500));
   }
 
   updateIncidentStatus(id: string, request: UpdateIncidentStatusRequest): Observable<Incident> {
-    const incident = this.incidents.find(inc => inc.id === id);
+    const incident = this.incidents.find((inc) => inc.id === id);
     if (!incident) {
       throw new Error('Incident not found');
     }
@@ -204,7 +212,7 @@ export class MockService {
       type: 'status_change',
       occurredAt: new Date().toISOString(),
       payload: { message: `Status changed to ${request.status}`, userId: 'current-user' },
-      metadata: { correlationId: `corr-${this.events.length + 1}` }
+      metadata: { correlationId: `corr-${this.events.length + 1}` },
     });
 
     return of(incident).pipe(delay(300));
