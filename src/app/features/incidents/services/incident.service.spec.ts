@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { SpyObj } from 'jasmine';
 
 import { IncidentService } from '../../../core/services/incident.service';
 import { Incident, IncidentStatus, IncidentSeverity } from '../../../models';
@@ -8,7 +7,7 @@ import { Incident, IncidentStatus, IncidentSeverity } from '../../../models';
 describe('IncidentService', () => {
   let service: IncidentService;
   let httpMock: HttpTestingController;
-  let incidentService: any;
+  let incidentService: jasmine.SpyObj<IncidentService>;
 
   const mockIncident: Incident = {
     id: 'test-id',

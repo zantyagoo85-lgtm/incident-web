@@ -73,11 +73,11 @@ describe('IncidentListComponent', () => {
     });
   });
 
-  it('should apply filters', () => {
+  it('should apply filters with correct parameters', () => {
     component.filters.q = 'test';
     component.filters.status = IncidentStatus.OPEN;
 
-    const spy = jasmine.createSpyOn(incidentService, 'getIncidents').and.returnValue({
+    const spy = spyOn(incidentService, 'getIncidents').and.returnValue({
       subscribe: jasmine.createSpy('subscribe'),
     } as any);
 
