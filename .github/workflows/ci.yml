@@ -41,14 +41,6 @@ jobs:
       - name: Build application
         run: npm run build:prod
 
-      - name: Upload coverage reports
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage/lcov.info
-          fail_ci_if_error: true
-          verbose: true
-
   build-and-deploy:
     needs: lint-and-test
     runs-on: ubuntu-latest
