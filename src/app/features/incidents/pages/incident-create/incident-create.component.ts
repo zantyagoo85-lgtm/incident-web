@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -48,17 +48,37 @@ export class IncidentCreateComponent {
     private incidentService: IncidentService,
     private router: Router,
     private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
   ) {
     this.incidentForm = this.createIncidentForm();
+    console.log('IncidentCreateComponent initialized');
+    console.log('Initial form value:', this.incidentForm.value);
+    console.log('Initial form valid:', this.incidentForm.valid);
+    console.log('Initial form errors:', this.incidentForm.errors);
+
+    // Agregar listener para debugging
+    this.incidentForm.valueChanges.subscribe((value) => {
+      console.log('Form value changed:', value);
+      console.log('Form valid:', this.incidentForm.valid);
+      console.log('Form errors:', this.getFormErrors());
+    });
+  }
+
+  private getFormErrors(): any {
+    const errors: any = {};
+    Object.keys(this.incidentForm.controls).forEach((key) => {
+      const control = this.incidentForm.get(key);
+      if (control && control.errors) {
+        errors[key] = control.errors;
+      }
+    });
+    return errors;
   }
 
   private createIncidentForm(): FormGroup {
     return this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
-      description: [
-        '',
-        [Validators.required, Validators.minLength(10), Validators.maxLength(1000)],
-      ],
+      description: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(1000)]],
       severity: [IncidentSeverity.MEDIUM, [Validators.required]],
       serviceId: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
     });
@@ -86,16 +106,20 @@ export class IncidentCreateComponent {
       return;
     }
 
+    console.log('Creating incident with data:', this.incidentForm.value);
     this.loading = true;
     const incidentData: CreateIncidentRequest = this.incidentForm.value;
 
     this.incidentService.createIncident(incidentData).subscribe({
       next: (incident) => {
+        console.log('Incident created successfully:', incident);
         this.snackBar.open('Incidente creado exitosamente', 'Cerrar', {
           duration: 3000,
           horizontalPosition: 'center',
           verticalPosition: 'top',
         });
+        this.loading = false;
+        this.cdr.detectChanges();
         this.router.navigate(['/incidents', incident.id]);
       },
       error: (error) => {
@@ -106,9 +130,11 @@ export class IncidentCreateComponent {
           verticalPosition: 'top',
         });
         this.loading = false;
+        this.cdr.detectChanges();
       },
       complete: () => {
         this.loading = false;
+        this.cdr.detectChanges();
       },
     });
   }

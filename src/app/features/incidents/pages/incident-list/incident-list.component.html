@@ -23,7 +23,12 @@
       <div class="filters-grid">
         <mat-form-field appearance="outline">
           <mat-label>Búsqueda</mat-label>
-          <input matInput [(ngModel)]="filters.q" placeholder="Buscar por título..." />
+          <input
+            matInput
+            [(ngModel)]="filters.searchQuery"
+            (change)="applyFilters()"
+            placeholder="Buscar por título..."
+          />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -152,6 +157,7 @@
         <mat-paginator
           [length]="totalCount"
           [pageSize]="pageSize"
+          [pageIndex]="currentPage"
           [pageSizeOptions]="[5, 10, 25, 50]"
           (page)="onPageChange($event)"
           showFirstLastButtons

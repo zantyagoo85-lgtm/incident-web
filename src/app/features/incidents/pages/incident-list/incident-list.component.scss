@@ -56,6 +56,8 @@
 
 .filters-card {
   margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
 
   .mat-card-header {
     .mat-card-title {
@@ -76,6 +78,21 @@
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 16px;
     margin-bottom: 16px;
+
+    .mat-form-field {
+      position: relative;
+      z-index: 2;
+
+      .mat-form-field-wrapper {
+        position: relative;
+        z-index: 2;
+      }
+
+      .mat-select-panel {
+        z-index: 1000 !important;
+        position: fixed !important;
+      }
+    }
   }
 
   .filter-actions {

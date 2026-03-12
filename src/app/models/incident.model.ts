@@ -1,10 +1,19 @@
 import { IncidentEvent } from './event.model';
+import { PaginatedResponse } from './api-response.model';
 
 export enum IncidentStatus {
   OPEN = 'OPEN',
   IN_PROGRESS = 'IN_PROGRESS',
   RESOLVED = 'RESOLVED',
   CLOSED = 'CLOSED',
+}
+
+// Enum para status del backend (snake_case)
+export enum ApiIncidentStatus {
+  OPEN = 'open',
+  IN_PROGRESS = 'in_progress',
+  RESOLVED = 'resolved',
+  CLOSED = 'closed',
 }
 
 export enum IncidentSeverity {
@@ -34,23 +43,18 @@ export interface CreateIncidentRequest {
 }
 
 export interface UpdateIncidentStatusRequest {
-  status: IncidentStatus;
+  status: ApiIncidentStatus;
 }
 
 export interface IncidentFilter {
   status?: IncidentStatus | '';
   severity?: IncidentSeverity | '';
-  serviceId?: string;
-  q?: string;
+  serviceId?: string | undefined;
+  searchQuery?: string;
   page?: number;
   pageSize?: number;
   sort?: string;
 }
 
-export interface IncidentListResponse {
-  incidents: Incident[];
-  totalCount: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-}
+// Tipo para la respuesta del endpoint de incidentes
+export type IncidentListResponse = PaginatedResponse<Incident>;

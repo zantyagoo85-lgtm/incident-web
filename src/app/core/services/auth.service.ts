@@ -43,7 +43,17 @@ export class AuthService {
   login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.apiService.post<LoginResponse>('/auth/login', credentials).pipe(
       tap((response) => {
-        this.setAuthData(response.token, response.userId, credentials.email);
+        console.log('AuthService login response:', response);
+        // El ApiService ya extrae response.data, así que response es directamente el contenido
+        if (response && response.accessToken) {
+          console.log('Setting auth data with:', {
+            token: response.accessToken.substring(0, 20) + '...',
+            userId: response.email,
+            fullName: response.fullName,
+            email: response.email,
+          });
+          this.setAuthData(response.accessToken, response.email, response.fullName, response.email);
+        }
       }),
     );
   }
@@ -64,20 +74,26 @@ export class AuthService {
     return this.authStateSubject.value.user;
   }
 
-  private setAuthData(token: string, userId: string, email?: string): void {
+  private setAuthData(token: string, userId: string, fullName?: string, email?: string): void {
     const user: User = {
       id: userId,
       email: email || '',
+      fullName: fullName || '',
     };
+
+    console.log('Setting auth data:', { token: token.substring(0, 20) + '...', user });
 
     localStorage.setItem(this.TOKEN_KEY, token);
     localStorage.setItem(this.USER_KEY, JSON.stringify(user));
 
-    this.authStateSubject.next({
+    const newAuthState = {
       isAuthenticated: true,
       user,
       token,
-    });
+    };
+
+    console.log('New auth state:', newAuthState);
+    this.authStateSubject.next(newAuthState);
   }
 
   private clearAuthData(): void {

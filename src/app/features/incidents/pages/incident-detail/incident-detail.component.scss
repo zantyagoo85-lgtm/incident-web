@@ -159,7 +159,7 @@
       }
     }
 
-    .timeline {
+    .timeline-container {
       position: relative;
       padding-left: 30px;
 
@@ -181,6 +181,13 @@
           background-color: #1976d2;
           border: 2px solid #fff;
           box-shadow: 0 0 0 2px #1976d2;
+
+          .timeline-icon {
+            font-size: 10px;
+            width: 10px;
+            height: 10px;
+            color: white;
+          }
         }
 
         .timeline-content-item {
@@ -188,6 +195,7 @@
           border-radius: 8px;
           padding: 16px;
           border-left: 3px solid #1976d2;
+          margin-left: 10px;
 
           .event-header {
             display: flex;
@@ -198,54 +206,35 @@
             .event-type {
               font-weight: 500;
               color: #333;
+              background-color: #e3f2fd;
+              padding: 4px 8px;
+              border-radius: 4px;
+              font-size: 0.85rem;
             }
 
             .event-time {
               font-size: 0.9rem;
               color: #666;
+              font-family: 'Courier New', monospace;
             }
           }
 
-          .event-details {
-            .event-payload {
-              p {
-                margin: 4px 0;
-                font-size: 0.95rem;
-
-                strong {
-                  color: #333;
-                }
-              }
-
-              .success {
-                color: #28a745;
-                font-weight: 500;
-              }
-
-              .error {
-                color: #dc3545;
-                font-weight: 500;
-              }
-
-              .error-message {
-                color: #dc3545;
-                background-color: #f8d7da;
-                padding: 8px;
-                border-radius: 4px;
-                margin-top: 8px;
-              }
-            }
+          .event-message {
+            margin: 8px 0;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            color: #555;
           }
 
-          .event-metadata {
-            margin-top: 12px;
+          .event-user {
+            margin-top: 8px;
             padding-top: 8px;
             border-top: 1px solid #e0e0e0;
+            font-size: 0.85rem;
+            color: #666;
 
-            small {
-              color: #666;
-              font-family: 'Courier New', monospace;
-              font-size: 0.8rem;
+            strong {
+              color: #333;
             }
           }
         }

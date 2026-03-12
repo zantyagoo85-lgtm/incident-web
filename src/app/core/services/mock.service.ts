@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, delay } from 'rxjs';
+
 import {
   Incident,
-  IncidentEvent,
-  IncidentListResponse,
+  IncidentStatus,
+  IncidentSeverity,
   CreateIncidentRequest,
   UpdateIncidentStatusRequest,
   IncidentFilter,
-  IncidentStatus,
-  IncidentSeverity,
+  IncidentListResponse,
+  IncidentEvent,
 } from '../../models';
 
 @Injectable({
@@ -26,99 +27,36 @@ export class MockService {
       createdAt: '2024-01-15T10:30:00Z',
       updatedAt: '2024-01-15T11:45:00Z',
     },
-    {
-      id: '2',
-      title: 'API Response Time Degraded',
-      description: 'API endpoints are responding with latency above acceptable thresholds',
-      status: IncidentStatus.IN_PROGRESS,
-      severity: IncidentSeverity.MEDIUM,
-      serviceId: 'svc-api-002',
-      createdAt: '2024-01-15T14:20:00Z',
-      updatedAt: '2024-01-15T15:30:00Z',
-    },
-    {
-      id: '3',
-      title: 'Memory Usage Spike',
-      description: 'Application memory usage has exceeded 80% threshold',
-      status: IncidentStatus.RESOLVED,
-      severity: IncidentSeverity.LOW,
-      serviceId: 'svc-app-003',
-      createdAt: '2024-01-14T09:15:00Z',
-      updatedAt: '2024-01-14T16:45:00Z',
-    },
-    {
-      id: '4',
-      title: 'Authentication Service Down',
-      description: 'Users are unable to authenticate with the system',
-      status: IncidentStatus.OPEN,
-      severity: IncidentSeverity.CRITICAL,
-      serviceId: 'svc-auth-004',
-      createdAt: '2024-01-15T16:00:00Z',
-      updatedAt: '2024-01-15T16:00:00Z',
-    },
-    {
-      id: '5',
-      title: 'File Upload Issues',
-      description: 'Users reporting failures when uploading files larger than 10MB',
-      status: IncidentStatus.IN_PROGRESS,
-      severity: IncidentSeverity.MEDIUM,
-      serviceId: 'svc-storage-005',
-      createdAt: '2024-01-15T12:45:00Z',
-      updatedAt: '2024-01-15T13:20:00Z',
-    },
   ];
 
   private events: IncidentEvent[] = [
     {
-      incidentId: '1',
-      type: 'status_change',
+      id: 'evt-1',
+      eventType: 'incident_created',
+      description: 'Incident created',
       occurredAt: '2024-01-15T10:30:00Z',
-      payload: { message: 'Incident created', userId: 'user-001' },
-      metadata: { correlationId: 'corr-001' },
-    },
-    {
-      incidentId: '1',
-      type: 'status_change',
-      occurredAt: '2024-01-15T11:00:00Z',
-      payload: { message: 'Status changed to IN_PROGRESS', userId: 'user-002' },
-      metadata: { correlationId: 'corr-002' },
-    },
-    {
-      incidentId: '1',
-      type: 'comment',
-      occurredAt: '2024-01-15T11:30:00Z',
-      payload: {
-        message: 'Database team is investigating the connection issue',
-        userId: 'user-003',
-      },
-      metadata: { correlationId: 'corr-003' },
-    },
-    {
-      incidentId: '1',
-      type: 'status_change',
-      occurredAt: '2024-01-15T11:45:00Z',
-      payload: { message: 'Status changed to OPEN', userId: 'user-002' },
-      metadata: { correlationId: 'corr-004' },
+      changedBy: 'system@app.local',
+      correlationId: 'corr-1',
+      userEmail: 'system@app.local',
     },
   ];
 
   getIncidents(filter: IncidentFilter): Observable<IncidentListResponse> {
     let filteredIncidents = [...this.incidents];
 
-    // Apply filters
     if (filter.status) {
       filteredIncidents = filteredIncidents.filter((inc) => inc.status === filter.status);
     }
     if (filter.severity) {
       filteredIncidents = filteredIncidents.filter((inc) => inc.severity === filter.severity);
     }
-    if (filter.serviceId) {
+    if (filter.serviceId && filter.serviceId) {
       filteredIncidents = filteredIncidents.filter((inc) =>
-        inc.serviceId.includes(filter.serviceId!),
+        inc.serviceId.includes(filter.serviceId as string),
       );
     }
-    if (filter.q) {
-      const searchTerm = filter.q.toLowerCase();
+    if (filter.searchQuery) {
+      const searchTerm = filter.searchQuery.toLowerCase();
       filteredIncidents = filteredIncidents.filter(
         (inc) =>
           inc.title.toLowerCase().includes(searchTerm) ||
@@ -126,53 +64,32 @@ export class MockService {
       );
     }
 
-    // Sort
-    if (filter.sort) {
-      filteredIncidents.sort((a, b) => {
-        const severityOrder = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
+    const totalCount = filteredIncidents.length;
+    const totalPages = Math.ceil(totalCount / (filter.pageSize || 10));
+    const currentPage = filter.page || 0;
 
-        switch (filter.sort) {
-          case 'createdAt':
-            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-          case 'severity':
-            return severityOrder[a.severity] - severityOrder[b.severity];
-          default:
-            return 0;
-        }
-      });
-    }
-
-    // Pagination
-    const page = filter.page || 1;
-    const pageSize = filter.pageSize || 10;
-    const startIndex = (page - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const paginatedIncidents = filteredIncidents.slice(startIndex, endIndex);
-    const totalPages = Math.ceil(filteredIncidents.length / pageSize);
-
-    return of({
-      incidents: paginatedIncidents,
-      totalCount: filteredIncidents.length,
-      page,
-      pageSize,
+    const mockResponse: IncidentListResponse = {
+      items: filteredIncidents,
+      currentPage,
       totalPages,
-    }).pipe(delay(500)); // Simulate network delay
+      pageSize: filter.pageSize || 10,
+      totalCount,
+      hasPreviousPage: currentPage > 0,
+      hasNextPage: currentPage < totalPages - 1,
+    };
+
+    return of(mockResponse).pipe(delay(500));
   }
 
   getIncidentById(id: string): Observable<Incident & { events: IncidentEvent[] }> {
     const incident = this.incidents.find((inc) => inc.id === id);
-    const events = this.events.filter((evt) => evt.incidentId === id);
+    const events = this.events.filter((evt) => evt.id === id);
 
     if (!incident) {
       throw new Error('Incident not found');
     }
 
-    return of({
-      ...incident,
-      events: events.sort(
-        (a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime(),
-      ),
-    }).pipe(delay(300));
+    return of({ ...incident, events }).pipe(delay(500));
   }
 
   createIncident(request: CreateIncidentRequest): Observable<Incident> {
@@ -186,13 +103,14 @@ export class MockService {
 
     this.incidents.unshift(newIncident);
 
-    // Add initial event
     this.events.push({
-      incidentId: newIncident.id,
-      type: 'status_change',
+      id: `evt-${this.events.length + 1}`,
+      eventType: 'status_change',
+      description: 'Incident created',
       occurredAt: new Date().toISOString(),
-      payload: { message: 'Incident created', userId: 'current-user' },
-      metadata: { correlationId: `corr-${this.events.length + 1}` },
+      changedBy: 'current-user',
+      correlationId: `corr-${this.events.length + 1}`,
+      userEmail: 'current-user',
     });
 
     return of(newIncident).pipe(delay(500));
@@ -204,16 +122,29 @@ export class MockService {
       throw new Error('Incident not found');
     }
 
-    incident.status = request.status;
-    incident.updatedAt = new Date().toISOString();
+    const statusMap: Record<string, IncidentStatus> = {
+      open: IncidentStatus.OPEN,
+      in_progress: IncidentStatus.IN_PROGRESS,
+      resolved: IncidentStatus.RESOLVED,
+      closed: IncidentStatus.CLOSED,
+    };
 
-    // Add status change event
+    const updatedIncident = {
+      ...incident,
+      status: statusMap[request.status] || IncidentStatus.OPEN,
+      updatedAt: new Date().toISOString(),
+    };
+
+    this.incidents = this.incidents.map((inc) => (inc.id === id ? updatedIncident : inc));
+
     this.events.push({
-      incidentId: id,
-      type: 'status_change',
+      id: `evt-${this.events.length + 1}`,
+      eventType: 'status_change',
+      description: `Status changed to ${request.status}`,
       occurredAt: new Date().toISOString(),
-      payload: { message: `Status changed to ${request.status}`, userId: 'current-user' },
-      metadata: { correlationId: `corr-${this.events.length + 1}` },
+      changedBy: 'current-user',
+      correlationId: `corr-${this.events.length + 1}`,
+      userEmail: 'current-user',
     });
 
     return of(incident).pipe(delay(300));

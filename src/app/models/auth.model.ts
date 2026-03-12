@@ -4,16 +4,18 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  token: string;
-  userId: string;
-  email?: string;
-  expiresIn?: number;
+  accessToken: string;
+  tokenType: string;
+  expiresIn: number;
+  fullName: string;
+  email: string;
 }
 
 export interface User {
   id: string;
   email: string;
   name?: string;
+  fullName?: string;
 }
 
 export interface AuthState {

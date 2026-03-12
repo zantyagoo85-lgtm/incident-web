@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -24,6 +24,7 @@ import {
   IncidentSeverity,
   UpdateIncidentStatusRequest,
   IncidentEvent,
+  ApiIncidentStatus,
 } from '../../../../models';
 import { getStatusColor } from '../../../../core/constants/status.constants';
 import { getStatusColor as getSeverityColor } from '../../../../core/constants/severity.constants';
@@ -60,6 +61,7 @@ export class IncidentDetailComponent implements OnInit {
     private incidentService: IncidentService,
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
   ) {
     this.statusForm = this.fb.group({
       status: ['', [Validators.required]],
@@ -76,13 +78,16 @@ export class IncidentDetailComponent implements OnInit {
   }
 
   loadIncidentDetail(id: string): void {
+    console.log('Loading incident detail for ID:', id);
     this.loading = true;
     this.incidentService.getIncidentById(id).subscribe({
       next: (data) => {
+        console.log('Incident detail loaded:', data);
         this.incident = data;
         this.events = data.events || [];
         this.statusForm.patchValue({ status: data.status });
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error loading incident detail:', error);
@@ -92,31 +97,49 @@ export class IncidentDetailComponent implements OnInit {
           verticalPosition: 'top',
         });
         this.loading = false;
+        this.cdr.detectChanges();
         this.router.navigate(['/incidents']);
       },
     });
   }
 
   updateStatus(status: string): void {
+    console.log('updateStatus called with:', status);
+    console.log('Current incident:', this.incident);
+
     if (!this.incident) {
+      console.error('No incident available for update');
       return;
     }
 
+    // Guardar el ID original antes de actualizar
+    const originalId = this.incident.id;
+    console.log('Incident ID:', originalId);
     this.updatingStatus = true;
+
+    // Convertir IncidentStatus a ApiIncidentStatus
+    const apiStatus = this.mapToApiStatus(status as IncidentStatus);
     const request: UpdateIncidentStatusRequest = {
-      status: status as IncidentStatus,
+      status: apiStatus,
     };
 
-    this.incidentService.updateIncidentStatus(this.incident!.id, request).subscribe({
+    console.log('Updating status with request:', request);
+    console.log('Calling updateIncidentStatus with ID:', originalId);
+
+    this.incidentService.updateIncidentStatus(originalId, request).subscribe({
       next: (updatedIncident) => {
-        this.incident = updatedIncident;
+        console.log('Status updated successfully:', updatedIncident);
+        // Mantener el ID original
+        this.incident = { ...updatedIncident, id: originalId };
         this.snackBar.open('Estado actualizado exitosamente', 'Cerrar', {
           duration: 3000,
           horizontalPosition: 'center',
           verticalPosition: 'top',
         });
         this.updatingStatus = false;
-        this.loadIncidentDetail(this.incident!.id);
+        this.cdr.detectChanges();
+        console.log('Reloading incident detail with ID:', originalId);
+        this.loadIncidentDetail(originalId);
       },
       error: (error) => {
         console.error('Error updating status:', error);
@@ -126,8 +149,19 @@ export class IncidentDetailComponent implements OnInit {
           verticalPosition: 'top',
         });
         this.updatingStatus = false;
+        this.cdr.detectChanges();
       },
     });
+  }
+
+  private mapToApiStatus(status: IncidentStatus): ApiIncidentStatus {
+    const statusMap: Record<IncidentStatus, ApiIncidentStatus> = {
+      [IncidentStatus.OPEN]: ApiIncidentStatus.OPEN,
+      [IncidentStatus.IN_PROGRESS]: ApiIncidentStatus.IN_PROGRESS,
+      [IncidentStatus.RESOLVED]: ApiIncidentStatus.RESOLVED,
+      [IncidentStatus.CLOSED]: ApiIncidentStatus.CLOSED,
+    };
+    return statusMap[status] || ApiIncidentStatus.OPEN;
   }
 
   getStatusColor(status: IncidentStatus): string {
