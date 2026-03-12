@@ -15,7 +15,7 @@ Frontend desarrollado con **Angular 21** para la visualización y gestión de in
 
 ### 1. Instalación de dependencias
 ```bash
-npm install
+npm run build:prod
 ```
 
 ### 2. Configuración de Variables de Entorno
