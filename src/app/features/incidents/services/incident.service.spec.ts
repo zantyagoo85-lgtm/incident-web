@@ -196,17 +196,6 @@ describe('IncidentService', () => {
       },
     };
 
-    const mockUpdatedIncident = {
-      id: '1',
-      title: 'Database Connection Failed',
-      description: 'Primary database server is not responding to connection requests',
-      severity: IncidentSeverity.HIGH,
-      status: IncidentStatus.RESOLVED,
-      serviceId: 'svc-database-001',
-      createdAt: '2024-01-15T10:30:00Z',
-      updatedAt: '2024-01-15T12:00:00Z',
-    };
-
     service.updateIncidentStatus('1', updateRequest).subscribe((incident) => {
       expect(incident.id).toBe('1');
       expect(incident.title).toBe('Database Connection Failed');
