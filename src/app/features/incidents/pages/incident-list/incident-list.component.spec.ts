@@ -40,14 +40,14 @@ describe('IncidentListComponent', () => {
     component.ngOnInit();
 
     expect(spy).toHaveBeenCalledWith({
-      page: 0,
+      page: 1,
       pageSize: 10,
       sort: 'createdAt_desc',
     });
   });
 
   it('should apply filters', () => {
-    component.filters.q = 'test';
+    component.filters.searchQuery = 'test';
     component.filters.status = IncidentStatus.OPEN;
 
     const spy = spyOn(incidentService, 'getIncidents').and.returnValue({
@@ -57,16 +57,16 @@ describe('IncidentListComponent', () => {
     component.applyFilters();
 
     expect(spy).toHaveBeenCalledWith({
-      page: 0,
+      page: 1,
       pageSize: 10,
       sort: 'createdAt_desc',
-      q: 'test',
+      searchQuery: 'test',
       status: IncidentStatus.OPEN,
     });
   });
 
   it('should clear filters', () => {
-    component.filters.q = 'test';
+    component.filters.searchQuery = 'test';
     component.filters.status = IncidentStatus.OPEN;
 
     const spy = spyOn(component, 'applyFilters');
@@ -74,7 +74,7 @@ describe('IncidentListComponent', () => {
     component.clearFilters();
 
     expect(component.filters).toEqual({
-      page: 0,
+      page: 1,
       pageSize: 10,
       sort: 'createdAt_desc',
     });

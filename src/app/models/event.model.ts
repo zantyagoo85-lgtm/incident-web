@@ -1,12 +1,11 @@
 export interface IncidentEvent {
-  incidentId: string;
-  type: string;
+  id: string;
+  eventType: string;
+  description: string;
   occurredAt: string;
-  payload: Record<string, any>;
-  metadata: {
-    correlationId: string;
-    [key: string]: any;
-  };
+  changedBy: string;
+  correlationId: string;
+  userEmail: string;
 }
 
 export interface ServiceCatalogSnapshot {

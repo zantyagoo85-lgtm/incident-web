@@ -77,23 +77,21 @@
             <p>No hay eventos registrados</p>
           </div>
 
-          <div *ngIf="incident.events && incident.events.length > 0" class="timeline">
+          <div *ngIf="incident.events && incident.events.length > 0" class="timeline-container">
             <div *ngFor="let event of incident.events; let last = last" class="timeline-item">
               <div class="timeline-marker">
                 <mat-icon class="timeline-icon">circle</mat-icon>
                 <div class="timeline-line" [class.hidden]="last"></div>
               </div>
-              <div class="timeline-content">
+              <div class="timeline-content-item">
                 <div class="event-header">
-                  <span class="event-type">{{ getEventTypeLabel(event.type) }}</span>
+                  <span class="event-type">{{ getEventTypeLabel(event.eventType) }}</span>
                   <span class="event-time">{{ formatDate(event.occurredAt) }}</span>
                 </div>
                 <div class="event-message">
-                  {{ event.payload && event.payload['message'] }}
+                  {{ event.description }}
                 </div>
-                <div *ngIf="event.payload['userId']" class="event-user">
-                  Por: {{ event.payload['userId'] }}
-                </div>
+                <div *ngIf="event.userEmail" class="event-user">Por: {{ event.userEmail }}</div>
               </div>
             </div>
           </div>

@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { take } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/services/auth.service';
 import { LoginRequest } from '../../../../models';
@@ -236,18 +237,31 @@ export class LoginComponent {
 
     this.isLoading = true;
     const loginData: LoginRequest = this.loginForm.value;
+    console.log('Login data:', loginData);
 
     this.authService.login(loginData).subscribe({
-      next: () => {
+      next: (response) => {
+        console.log('Login successful, response:', response);
+
+        // Obtener el auth state actual
+        this.authService.authState$.pipe(take(1)).subscribe((authState) => {
+          console.log('Auth state after login:', authState);
+        });
+
         const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/incidents';
-        this.router.navigate([returnUrl]);
-        this.snackBar.open('¡Bienvenido! Has iniciado sesión correctamente', 'Cerrar', {
-          duration: 3000,
-          horizontalPosition: 'center',
-          verticalPosition: 'top',
+        console.log('Redirecting to:', returnUrl);
+
+        this.router.navigate([returnUrl]).then((navigated) => {
+          console.log('Navigation successful:', navigated);
+          this.snackBar.open('¡Bienvenido! Has iniciado sesión correctamente', 'Cerrar', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         });
       },
       error: (error: any) => {
+        console.error('Login error:', error);
         this.isLoading = false;
         const errorMessage =
           error?.error?.message || 'Error al iniciar sesión. Verifica tus credenciales.';

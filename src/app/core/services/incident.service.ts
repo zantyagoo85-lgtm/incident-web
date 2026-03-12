@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { ApiService } from './api.service';
 import {
   Incident,
@@ -21,7 +21,14 @@ export class IncidentService {
   }
 
   getIncidentById(id: string): Observable<Incident & { events: IncidentEvent[] }> {
-    return this.apiService.get<Incident & { events: IncidentEvent[] }>(`/incidents/${id}`);
+    return this.apiService
+      .get<{ incident: Incident; timeline: IncidentEvent[] }>(`/incidents/${id}`)
+      .pipe(
+        map((response: { incident: Incident; timeline: IncidentEvent[] }) => ({
+          ...response.incident,
+          events: response.timeline || [],
+        })),
+      );
   }
 
   createIncident(request: CreateIncidentRequest): Observable<Incident> {
@@ -29,6 +36,7 @@ export class IncidentService {
   }
 
   updateIncidentStatus(id: string, request: UpdateIncidentStatusRequest): Observable<Incident> {
+    console.log('IncidentService.updateIncidentStatus called with:', { id, request });
     return this.apiService.patch<Incident>(`/incidents/${id}/status`, request);
   }
 

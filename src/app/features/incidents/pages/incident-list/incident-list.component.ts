@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -15,14 +15,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { IncidentService } from '../../../../core/services/incident.service';
 import { Incident, IncidentStatus, IncidentSeverity, IncidentFilter } from '../../../../models';
-
-interface IncidentListResponse {
-  incidents: Incident[];
-  totalCount: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-}
 
 @Component({
   selector: 'app-incident-list',
@@ -50,6 +42,7 @@ export class IncidentListComponent implements OnInit {
   incidents: Incident[] = [];
   loading = false;
   totalCount = 0;
+  totalPages = 0;
   pageSize = 10;
   currentPage = 0;
 
@@ -57,49 +50,99 @@ export class IncidentListComponent implements OnInit {
   severityOptions = Object.values(IncidentSeverity);
 
   filters: IncidentFilter = {
-    page: 0,
+    page: 1,
     pageSize: 10,
     sort: 'createdAt_desc',
   };
 
-  constructor(private incidentService: IncidentService) {}
+  constructor(
+    private incidentService: IncidentService,
+    private cdr: ChangeDetectorRef,
+  ) {
+    console.log('IncidentListComponent constructor initialized');
+  }
 
   ngOnInit(): void {
+    console.log('IncidentListComponent ngOnInit called');
+    console.log('Initial filters:', this.filters);
+
+    // Cargar incidentes inmediatamente
     this.loadIncidents();
   }
 
   loadIncidents(): void {
+    console.log('Loading incidents with filters:', this.filters);
     this.loading = true;
     this.incidentService.getIncidents(this.filters).subscribe({
-      next: (response: IncidentListResponse) => {
-        this.incidents = response.incidents;
+      next: (response) => {
+        console.log('Backend response:', response);
+        // ApiService already extracts the data from ApiResponse
+        this.incidents = response.items;
         this.totalCount = response.totalCount;
+        this.totalPages = response.totalPages;
+        this.pageSize = response.pageSize;
+
+        // Only update currentPage if it's different from current paginator state
+        // Backend page 1,2,3... → Frontend pageIndex 0,1,2...
+        const newCurrentPage = response.currentPage - 1;
+        if (this.currentPage !== newCurrentPage) {
+          this.currentPage = newCurrentPage;
+        }
+
         this.loading = false;
+
+        // Forzar change detection para actualizar la UI
+        console.log('Forcing change detection');
+        console.log('Updated currentPage:', this.currentPage);
+        console.log('Total pages:', this.totalPages);
+        this.cdr.detectChanges();
       },
       error: (error: any) => {
         console.error('Error loading incidents:', error);
         this.loading = false;
+        this.cdr.detectChanges();
       },
     });
   }
 
   applyFilters(): void {
-    this.filters.page = 0;
+    console.log('applyFilters called, resetting page to 1');
+    this.filters.page = 1; // Backend usa páginas 1,2,3...
+    this.currentPage = 0; // Reset frontend paginator to first page
+    console.log('New filters:', this.filters);
     this.loadIncidents();
   }
 
   clearFilters(): void {
     this.filters = {
-      page: 0,
+      page: 1, // Backend usa páginas 1,2,3...
       pageSize: 10,
       sort: 'createdAt_desc',
     };
+    this.currentPage = 0; // Reset frontend paginator to first page
+    this.pageSize = 10; // Reset page size to default
     this.applyFilters();
   }
 
   onPageChange(event: { pageIndex: number; pageSize: number }): void {
-    this.filters.page = event.pageIndex;
+    console.log('Paginator event:', event);
+    console.log('Current filters before change:', this.filters);
+
+    // Angular Material pageIndex 0,1,2... → Backend page 1,2,3...
+    const backendPage = event.pageIndex + 1;
+
+    console.log('Sending to backend:', {
+      page: backendPage,
+      pageSize: event.pageSize,
+    });
+
+    this.filters.page = backendPage;
     this.filters.pageSize = event.pageSize;
+
+    // Update frontend currentPage to match paginator
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+
     this.loadIncidents();
   }
 
